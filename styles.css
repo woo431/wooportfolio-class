@@ -108,9 +108,14 @@ h1 em, .contact h2 em { color: var(--orange); font-style: normal; }
 .contact-form label { margin-bottom: 7px; color: #a8a9b0; font: 10px "DM Sans", sans-serif; }
 .contact-form input, .contact-form textarea { width: 100%; margin-bottom: 21px; padding: 9px 0; color: #fff; background: transparent; border: 0; border-bottom: 1px solid #53545b; outline: 0; font: 13px "Noto Sans KR", sans-serif; resize: vertical; }
 .contact-form input:focus, .contact-form textarea:focus { border-bottom-color: var(--lime); }
+.contact-form input[aria-invalid="true"], .contact-form textarea[aria-invalid="true"] { border-bottom-color: #ff9f91; }
 .contact-form input::placeholder, .contact-form textarea::placeholder { color: #6d6e75; }
+.field-error { min-height: 0; margin: -15px 0 17px; color: #ffb1a3; font-size: 12px; line-height: 1.5; }
+.field-error:empty { display: none; }
 .button-light { align-self: flex-start; margin-top: 15px; color: var(--ink); background: var(--lime); }
 .form-status { min-height: 20px; margin: 12px 0 0; color: var(--lime); font-size: 11px; }
+.form-status.is-error { color: #ffb1a3; background-image: none; -webkit-text-fill-color: currentColor; }
+.form-status.is-success { color: var(--lime); background-image: none; -webkit-text-fill-color: currentColor; }
 .modal-open { overflow: hidden; }
 .project-modal { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; padding: 24px; background: #17181dcc; }
 .project-modal[hidden] { display: none; }
