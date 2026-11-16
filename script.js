@@ -2,6 +2,7 @@ const menuToggle = document.querySelector(".menu-toggle");
 const navLinks = document.querySelector(".nav-links");
 const contactForm = document.querySelector("#contact-form");
 const formStatus = document.querySelector(".form-status");
+const contactFields = ["name", "email", "message"].map((id) => document.querySelector(`#${id}`));
 const projectModal = document.querySelector("#project-modal");
 const modalCloseButton = document.querySelector(".modal-close");
 const modalTitle = document.querySelector("#modal-title");
@@ -136,11 +137,74 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+// 입력 오류를 표시하고 해당 필드의 접근성 상태를 갱신합니다.
+function showFieldError(field, message) {
+  const errorMessage = document.querySelector(`#${field.id}-error`);
+  field.setAttribute("aria-invalid", "true");
+  errorMessage.textContent = message;
+}
+
+// 필수 입력값과 이메일 형식을 검사하고 첫 번째 오류 필드에 포커스를 둡니다.
+function validateContactForm() {
+  let firstInvalidField = null;
+  const [nameField, emailField, messageField] = contactFields;
+
+  contactFields.forEach((field) => {
+    field.setAttribute("aria-invalid", "false");
+    document.querySelector(`#${field.id}-error`).textContent = "";
+  });
+
+  if (!nameField.value.trim()) {
+    showFieldError(nameField, "이름을 입력해 주세요.");
+    firstInvalidField = nameField;
+  }
+
+  if (!emailField.value.trim()) {
+    showFieldError(emailField, "이메일 주소를 입력해 주세요.");
+    if (!firstInvalidField) firstInvalidField = emailField;
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailField.value.trim())) {
+    showFieldError(emailField, "올바른 이메일 주소를 입력해 주세요. (예: hello@email.com)");
+    if (!firstInvalidField) firstInvalidField = emailField;
+  }
+
+  if (!messageField.value.trim()) {
+    showFieldError(messageField, "메시지를 입력해 주세요.");
+    if (!firstInvalidField) firstInvalidField = messageField;
+  }
+
+  if (firstInvalidField) {
+    firstInvalidField.focus();
+    return false;
+  }
+
+  return true;
+}
+
+contactFields.forEach((field) => {
+  field.addEventListener("input", () => {
+    field.setAttribute("aria-invalid", "false");
+    document.querySelector(`#${field.id}-error`).textContent = "";
+    formStatus.textContent = "";
+    formStatus.classList.remove("is-error", "is-success");
+  });
+});
+
 contactForm?.addEventListener("submit", (event) => {
   event.preventDefault();
-  const name = new FormData(contactForm).get("name");
-  formStatus.textContent = `${name}님, 메시지를 확인했습니다. 곧 답변드릴게요!`;
+
+  formStatus.textContent = "";
+  formStatus.classList.remove("is-error", "is-success");
+
+  if (!validateContactForm()) {
+    formStatus.textContent = "입력 항목을 확인하고 수정해 주세요.";
+    formStatus.classList.add("is-error");
+    return;
+  }
+
+  const name = contactFields[0].value.trim();
   contactForm.reset();
+  formStatus.textContent = `${name}님, 입력 내용이 모두 확인되었습니다. (실제 이메일은 전송되지 않았습니다.)`;
+  formStatus.classList.add("is-success");
 });
 
 document.querySelector("#year").textContent = new Date().getFullYear();
